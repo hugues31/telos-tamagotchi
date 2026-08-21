@@ -4,8 +4,9 @@ notion Pet entity {
   attr hunger    int
   attr happiness int
   attr energy    int
+  attr age       int
   attr weight    decimal
-  attr stage     enum(egg, baby)
+  attr stage     enum(egg, baby, child, adult)
   attr activity  enum(awake, asleep)
   attr status    enum(alive, dead)
   rel  owned-by -> Owner

@@ -1,0 +1,21 @@
+intent INT-0010 "Pets grow up" {
+  status active
+  telos  "A pet frozen at one age is a photograph; care should have a future tense."
+  statement event-driven {
+    when   TimeTicks on Pet
+    system shall "advance Pet.age each tick; babies become children at 10, children become adults at 25"
+  }
+  requires INT-0004
+
+  scenario SCN-0014 "at ten ticks, a baby no more" {
+    given Pet { activity: awake, age: 9, stage: baby }
+    when  TimeTicks {}
+    then  Pet.stage in (child, adult)
+  }
+
+  scenario SCN-0015 "at twenty-five, all grown up" {
+    given Pet { activity: awake, age: 24, stage: child }
+    when  TimeTicks {}
+    then  Pet.stage == adult
+  }
+}

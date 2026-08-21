@@ -1,0 +1,5 @@
+constraint CON-0002 architecture "The domain never looks at the screen" {
+  rule  "tamagotchi/pet.py must not import the rendering or CLI layers (tamagotchi.render, tamagotchi.cli, argparse, curses)."
+  scope global
+  check "python3 tools/check_imports.py"
+}

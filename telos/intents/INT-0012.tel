@@ -1,0 +1,14 @@
+intent INT-0012 "A face for the terminal" {
+  status active
+  telos  "You cannot love what you cannot see."
+  statement optional {
+    where  ascii-art
+    system shall "render the pet as a multi-line ASCII portrait"
+  }
+
+  scenario SCN-0017 "a portrait is at least a few lines tall" {
+    given Pet { stage: baby }
+    when  RenderRequested {}
+    then  Portrait.lines >= 3
+  }
+}

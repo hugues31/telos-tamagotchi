@@ -1,0 +1,15 @@
+intent INT-0011 "Adults are harder to please" {
+  status active
+  telos  "Growing up means the same game brings a smaller joy."
+  statement event-driven {
+    when   PlayWithPet on Pet
+    system shall "when the pet is an adult, raise Pet.happiness by only 10"
+  }
+  refines INT-0003
+
+  scenario SCN-0016 "the same game, a smaller joy" {
+    given Pet { activity: awake, happiness: 50, hunger: 40, stage: adult }
+    when  PlayWithPet {}
+    then  Pet.happiness == 60 and Pet.hunger == 50
+  }
+}

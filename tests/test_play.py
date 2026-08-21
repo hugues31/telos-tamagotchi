@@ -17,3 +17,11 @@ def scn_0010_playing_with_a_sleeper_is_refused_and_changes_nothing():
         play(pet)
     assert pet.happiness == 50
     assert pet.activity is Activity.ASLEEP
+
+
+def scn_0016_the_same_game_a_smaller_joy():
+    pet = Pet(name="Momo", stage=Stage.ADULT, activity=Activity.AWAKE,
+              happiness=50, hunger=40)
+    play(pet)
+    assert pet.happiness == 60
+    assert pet.hunger == 50
