@@ -2,6 +2,9 @@ implements "pytest.ini" -> INT-0001
 implements "tamagotchi/__init__.py" -> INT-0001
 implements "tamagotchi/pet.py" -> INT-0001
 implements "tamagotchi/pet.py" -> INT-0002
+implements "tamagotchi/pet.py" -> INT-0003
 proves     "tests/test_feed.py::scn_0002_a_meal_takes_the_edge_off_hunger" -> SCN-0002
 proves     "tests/test_feed.py::scn_0003_a_full_belly_stays_at_zero" -> SCN-0003
+proves     "tests/test_feed.py::scn_0005_every_meal_leaves_a_trace_on_the_scale" -> SCN-0005
 proves     "tests/test_hatch.py::scn_0001_a_warmed_egg_hatches_into_a_baby" -> SCN-0001
+proves     "tests/test_play.py::scn_0004_a_game_cheers_the_pet_up_and_makes_it_peckish" -> SCN-0004

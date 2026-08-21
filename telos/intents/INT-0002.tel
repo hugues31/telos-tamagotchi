@@ -18,4 +18,11 @@ intent INT-0002 "Feeding takes the edge off hunger" {
     when  FeedPet {}
     then  Pet.hunger == 0
   }
+
+  scenario SCN-0005 "every meal leaves a trace on the scale" {
+    given Pet { hunger: 80, stage: baby, weight: 1.20 }
+    when  FeedPet {}
+    then  Pet.hunger == 50
+    then  Pet.weight == 1.30
+  }
 }

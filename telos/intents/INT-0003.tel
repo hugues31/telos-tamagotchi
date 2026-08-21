@@ -1,0 +1,15 @@
+intent INT-0003 "Playing lifts the mood (and works up an appetite)" {
+  status active
+  telos  "Joy is the only gauge an Owner cannot refill with a spoon."
+  statement event-driven {
+    when   PlayWithPet on Pet
+    system shall "raise Pet.happiness by 20 and Pet.hunger by 10"
+  }
+  requires INT-0001
+
+  scenario SCN-0004 "a game cheers the pet up and makes it peckish" {
+    given Pet { happiness: 50, hunger: 40, stage: baby }
+    when  PlayWithPet {}
+    then  Pet.happiness == 70 and Pet.hunger == 50
+  }
+}
