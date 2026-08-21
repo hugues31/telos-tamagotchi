@@ -1,0 +1,15 @@
+intent INT-0007 "No games with a sleeping pet" {
+  status active
+  telos  "An Owner who wakes a pet for fun teaches it to fear the night."
+  statement unwanted {
+    if     Pet.activity == asleep
+    system shall "reject PlayWithPet and leave the pet untouched"
+  }
+  requires INT-0005
+
+  scenario SCN-0010 "playing with a sleeper is refused and changes nothing" {
+    given Pet { activity: asleep, happiness: 50, stage: baby }
+    when  PlayWithPet {}
+    then  Pet.happiness == 50 and Pet.activity == asleep
+  }
+}

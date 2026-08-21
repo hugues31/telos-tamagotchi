@@ -1,0 +1,22 @@
+intent INT-0006 "Sleep restores what the day spent" {
+  status active
+  telos  "Sleep is the one meal hunger cannot interrupt."
+  statement state-driven {
+    while  Pet.activity == asleep
+    system shall "each tick restores 20 energy, leaves hunger alone, and wakes the pet at 100"
+  }
+  requires INT-0005
+
+  scenario SCN-0008 "a sleeping pet recovers without getting hungrier" {
+    given Pet { activity: asleep, energy: 40, hunger: 40, stage: baby }
+    when  TimeTicks {}
+    then  Pet.energy == 60
+    then  Pet.hunger == 40
+  }
+
+  scenario SCN-0009 "a fully rested pet wakes by itself" {
+    given Pet { activity: asleep, energy: 80, stage: baby }
+    when  TimeTicks {}
+    then  Pet.energy == 100 and Pet.activity == awake
+  }
+}

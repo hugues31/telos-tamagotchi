@@ -3,8 +3,17 @@ implements "tamagotchi/__init__.py" -> INT-0001
 implements "tamagotchi/pet.py" -> INT-0001
 implements "tamagotchi/pet.py" -> INT-0002
 implements "tamagotchi/pet.py" -> INT-0003
+implements "tamagotchi/pet.py" -> INT-0004
+implements "tamagotchi/pet.py" -> INT-0005
+implements "tamagotchi/pet.py" -> INT-0006
+implements "tamagotchi/pet.py" -> INT-0007
 proves     "tests/test_feed.py::scn_0002_a_meal_takes_the_edge_off_hunger" -> SCN-0002
 proves     "tests/test_feed.py::scn_0003_a_full_belly_stays_at_zero" -> SCN-0003
 proves     "tests/test_feed.py::scn_0005_every_meal_leaves_a_trace_on_the_scale" -> SCN-0005
 proves     "tests/test_hatch.py::scn_0001_a_warmed_egg_hatches_into_a_baby" -> SCN-0001
 proves     "tests/test_play.py::scn_0004_a_game_cheers_the_pet_up_and_makes_it_peckish" -> SCN-0004
+proves     "tests/test_play.py::scn_0010_playing_with_a_sleeper_is_refused_and_changes_nothing" -> SCN-0010
+proves     "tests/test_sleep.py::scn_0007_tucking_in_sends_the_pet_to_sleep" -> SCN-0007
+proves     "tests/test_sleep.py::scn_0008_a_sleeping_pet_recovers_without_getting_hungrier" -> SCN-0008
+proves     "tests/test_sleep.py::scn_0009_a_fully_rested_pet_wakes_by_itself" -> SCN-0009
+proves     "tests/test_tick.py::scn_0006_a_tick_makes_a_waking_pet_hungrier_and_wearier" -> SCN-0006

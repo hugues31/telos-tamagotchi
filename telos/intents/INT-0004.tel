@@ -1,0 +1,15 @@
+intent INT-0004 "Time gnaws at a waking pet" {
+  status active
+  telos  "A pet no clock can touch is a paperweight, not a companion."
+  statement event-driven {
+    when   TimeTicks on Pet
+    system shall "raise Pet.hunger by 5 and drain Pet.energy by 10 while awake"
+  }
+  requires INT-0001
+
+  scenario SCN-0006 "a tick makes a waking pet hungrier and wearier" {
+    given Pet { activity: awake, energy: 50, hunger: 40, stage: baby }
+    when  TimeTicks {}
+    then  Pet.hunger == 45 and Pet.energy == 40
+  }
+}

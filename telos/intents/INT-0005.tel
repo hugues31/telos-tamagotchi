@@ -1,0 +1,15 @@
+intent INT-0005 "A pet put to bed falls asleep" {
+  status active
+  telos  "Rest must be a gift the Owner can give."
+  statement event-driven {
+    when   PutPetToBed on Pet
+    system shall set Pet.activity = asleep
+  }
+  requires INT-0001
+
+  scenario SCN-0007 "tucking in sends the pet to sleep" {
+    given Pet { activity: awake, stage: baby }
+    when  PutPetToBed {}
+    then  Pet.activity == asleep
+  }
+}
