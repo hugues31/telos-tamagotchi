@@ -1,0 +1,7 @@
+notion Pet entity {
+  def  "A small creature that depends entirely on its Owner."
+  attr name   string
+  attr hunger int
+  attr stage  enum(egg, baby)
+  rel  owned-by -> Owner
+}

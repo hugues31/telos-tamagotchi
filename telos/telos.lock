@@ -1,9 +1,21 @@
 version = 1
 tool = "telos 0.7.1"
-spec_digest = "sha256:037c6fc2f831e5fb840b33f3c4f1c6d91c0516ec5d47ad1939b18c7d453668c3"
+sealed_by = "CHG-0001"
+spec_digest = "sha256:bc54bc1be9590c3cf23a9e9aa5239044bb854825e9860db302108f7fdc1cac15"
 
 [spec]
-"telos/bindings.tel" = "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
-"telos/telos.toml" = "4efbb0e693fb2d7f5a818de94ca672b565518ecc"
+"telos/bindings.tel" = "d8db6c2de8a003e52a708caa1f7fbd0f1e89efaf"
+"telos/intents/INT-0001.tel" = "371b759ecda5c85f876b4e9e1644cc20cd799ac3"
+"telos/intents/INT-0002.tel" = "f0c07c7404ab5720206b112de2df723abdc0cd36"
+"telos/notions/FeedPet.tel" = "7340895d28e5f6e802452c1ad915cc729f9a0d87"
+"telos/notions/HatchPet.tel" = "05526d2d6b2a9cb9c6b5e233f48938ea865a650b"
+"telos/notions/Owner.tel" = "ad3d0c6c9ba3da15defb5f67296a681313ef75fa"
+"telos/notions/Pet.tel" = "d189435fc405ac602cddc305b99c2145d7fdf07b"
+"telos/telos.toml" = "c56e8dc5acecb8b1f7ce33c6cd5a5d3ab301ca2f"
 
 [code]
+"pytest.ini" = "9c3cac73f3295e3084f576cd314cb73bc94496fa"
+"tamagotchi/__init__.py" = "e6588c53b4306420f25c24cf979b010a95dddaee"
+"tamagotchi/pet.py" = "89a47af268cbbad2e428ff81ce1d871564f002e4"
+"tests/test_feed.py" = "84e3cdc1e4cf01e42845fc09222eea69b020536e"
+"tests/test_hatch.py" = "ca359fa26b6f419c5ad47775b5ee07f85b3a9582"

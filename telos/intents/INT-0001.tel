@@ -1,0 +1,15 @@
+intent INT-0001 "Hatching brings a pet to life" {
+  status active
+  telos  "An egg that never hatches is just a stone with ambitions."
+  statement event-driven {
+    when   HatchPet on Pet
+    system shall set Pet.stage = baby
+  }
+
+  scenario SCN-0001 "a warmed egg hatches into a baby" {
+    given Owner { name: "Hugues" }
+    given Pet { name: "Momo", stage: egg }
+    when  HatchPet {}
+    then  Pet.stage == baby
+  }
+}

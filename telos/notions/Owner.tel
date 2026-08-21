@@ -1,0 +1,4 @@
+notion Owner actor {
+  def  "The human who keeps the pet alive, mostly out of love."
+  attr name string
+}
