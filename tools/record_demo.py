@@ -25,8 +25,10 @@ from pathlib import Path
 from playwright.sync_api import Page, sync_playwright
 
 VIEWPORT = {"width": 1280, "height": 800}
-GIF_WIDTH = 840
+GIF_WIDTH = 960
 GIF_FPS = 10
+GIF_COLORS = 256
+MAX_GIF_BYTES = 10_000_000
 
 # Installed on every page: a dot that follows mousemove events (Playwright's
 # mouse dispatches real DOM events, the OS cursor is never on the video) and
@@ -100,13 +102,14 @@ class Cursor:
         self.page.mouse.move(self.x, self.y)
         self.page.mouse.move(self.x + 1, self.y)
 
-    def move_to(self, x: float, y: float, duration_ms: int = 700) -> None:
+    def move_to(self, x: float, y: float, duration_ms: int = 500) -> None:
         steps = max(2, duration_ms // 33)
         for i in range(1, steps + 1):
             t = i / steps
             ease = 2 * t * t if t < 0.5 else 1 - (-2 * t + 2) ** 2 / 2
-            self.page.mouse.move(self.x + (x - self.x) * ease,
-                                 self.y + (y - self.y) * ease)
+            self.page.mouse.move(
+                self.x + (x - self.x) * ease, self.y + (y - self.y) * ease
+            )
             self.page.wait_for_timeout(33)
         self.x, self.y = x, y
 
@@ -121,10 +124,21 @@ class Cursor:
         self.page.mouse.up()
 
 
-def scroll_to(page: Page, selector: str, margin: int = 96, duration_ms: int = 1000) -> None:
+def scroll_to(
+    page: Page, selector: str, margin: int = 96, duration_ms: int = 600
+) -> None:
     top = page.locator(selector).evaluate(
-        "el => el.getBoundingClientRect().top + window.scrollY")
+        "el => el.getBoundingClientRect().top + window.scrollY"
+    )
     page.evaluate(SMOOTH_SCROLL_JS, [max(0, top - margin), duration_ms])
+
+
+def enforce_gif_size(gif: Path) -> None:
+    size = gif.stat().st_size
+    if size >= MAX_GIF_BYTES:
+        raise RuntimeError(
+            f"{gif} is {size / 1e6:.1f} MB; the demo GIF must stay below 10.0 MB"
+        )
 
 
 def tour(page: Page, base: str) -> None:
@@ -132,35 +146,61 @@ def tour(page: Page, base: str) -> None:
     wait = page.wait_for_timeout
     cursor = Cursor(page)
 
-    # Dashboard: hero, metrics, then down to the intent cards.
+    # Dashboard: project coherence and the headline coverage metrics.
     page.goto(f"{base}/index.html")
+    page.get_by_role("heading", name="Dashboard").wait_for()
     cursor.show()
-    wait(2000)
-    scroll_to(page, "section:has(ol.cards) h2")
-    wait(600)
-    cursor.move_to(400, 300, 500)
-    cursor.click('a[href="intents/INT-0008.html"]')
-    page.wait_for_load_state()
-
-    # INT-0008: unfold the canonical EARS intent, then show the sealed proof.
-    cursor.show()
-    wait(1500)
-    cursor.click("details summary")
-    wait(2600)
-    scroll_to(page, "#scenario-SCN-0011")
-    wait(2200)
-
-    # Coverage: the intent x scenario x test table, then the constraints.
-    page.evaluate(SMOOTH_SCROLL_JS, [0, 700])
-    wait(400)
-    cursor.click('nav a[href="../coverage.html"]')
-    page.wait_for_load_state()
-    cursor.show()
-    wait(2000)
-    scroll_to(page, "h2:has-text('Bindings')", duration_ms=1300)
     wait(1600)
-    scroll_to(page, "h2:has-text('Constraints')")
-    wait(2400)
+
+    # Intent index: scan the catalogue before opening a representative intent.
+    cursor.click('a.app-header__link[href="#/intents"]')
+    page.wait_for_url("**/index.html#/intents")
+    page.get_by_role("heading", name="Intents").wait_for()
+    wait(900)
+    intent_link = 'a[href="#/intent/INT-0008"]'
+    scroll_to(page, intent_link, margin=180, duration_ms=700)
+    wait(500)
+    cursor.click(intent_link)
+    page.wait_for_url("**/index.html#/intent/INT-0008")
+    page.get_by_role(
+        "heading", name="INT-0008 — Starvation is not a lifestyle"
+    ).wait_for()
+    wait(900)
+
+    # Intent detail: reveal the canonical declaration, then its proved scenario.
+    cursor.click("details summary")
+    wait(1300)
+    cursor.click("details summary")
+    wait(300)
+    scroll_to(page, "#scenario-SCN-0011", margin=180)
+    wait(1300)
+
+    # Graph: overview, relation filtering, then inspect a representative node.
+    cursor.click('a.app-header__link[href="#/graph"]')
+    page.wait_for_url("**/index.html#/graph")
+    page.get_by_role("heading", name="Graph", exact=True).wait_for()
+    page.locator(".cyto-graph__canvas").wait_for()
+    wait(1400)
+
+    relation_filter = 'select[aria-label="Filter graph by relation"]'
+    cursor.click(relation_filter)
+    page.locator(relation_filter).select_option("requires")
+    wait(900)
+    cursor.click('button[data-graph-action="fit"]')
+    wait(500)
+
+    graph = page.locator(".cyto-graph__canvas").bounding_box()
+    if graph is None:
+        raise RuntimeError("no bounding box for the dependency graph")
+    cursor.move_to(
+        graph["x"] + graph["width"] / 2,
+        graph["y"] + graph["height"] * 0.31,
+    )
+    page.mouse.down()
+    wait(280)
+    page.mouse.up()
+    page.locator(".selection-panel__id").wait_for()
+    wait(1800)
 
 
 def record(site: Path, workdir: Path) -> Path:
@@ -176,8 +216,8 @@ def record(site: Path, workdir: Path) -> Path:
         page = context.new_page()
 
         server = ThreadingHTTPServer(
-            ("127.0.0.1", 0),
-            partial(SimpleHTTPRequestHandler, directory=str(site)))
+            ("127.0.0.1", 0), partial(SimpleHTTPRequestHandler, directory=str(site))
+        )
         threading.Thread(target=server.serve_forever, daemon=True).start()
         try:
             tour(page, f"http://127.0.0.1:{server.server_address[1]}")
@@ -193,26 +233,70 @@ def encode(webm: Path, out_dir: Path) -> None:
     run = partial(subprocess.run, check=True)
     filters = f"fps={GIF_FPS},scale={GIF_WIDTH}:-1:flags=lanczos"
     palette = webm.with_name("palette.png")
-    run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(webm),
-         "-vf", "fps=30,scale=1280:-2:flags=lanczos",
-         "-c:v", "libx264", "-crf", "20", "-pix_fmt", "yuv420p",
-         "-movflags", "+faststart", str(out_dir / "demo.mp4")])
-    run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(webm),
-         "-vf", f"{filters},palettegen=stats_mode=diff:max_colors=128",
-         str(palette)])
-    run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(webm), "-i", str(palette),
-         "-lavfi", f"{filters}[x];[x][1:v]paletteuse="
-                   "dither=bayer:bayer_scale=5:diff_mode=rectangle",
-         str(out_dir / "demo.gif")])
+    run(
+        [
+            "ffmpeg",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            str(webm),
+            "-vf",
+            "fps=30,scale=1280:-2:flags=lanczos",
+            "-c:v",
+            "libx264",
+            "-crf",
+            "20",
+            "-pix_fmt",
+            "yuv420p",
+            "-movflags",
+            "+faststart",
+            str(out_dir / "demo.mp4"),
+        ]
+    )
+    run(
+        [
+            "ffmpeg",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            str(webm),
+            "-vf",
+            f"{filters},palettegen=stats_mode=diff:max_colors={GIF_COLORS}",
+            str(palette),
+        ]
+    )
+    run(
+        [
+            "ffmpeg",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            str(webm),
+            "-i",
+            str(palette),
+            "-lavfi",
+            f"{filters}[x];[x][1:v]paletteuse="
+            "dither=bayer:bayer_scale=5:diff_mode=rectangle",
+            str(out_dir / "demo.gif"),
+        ]
+    )
+    enforce_gif_size(out_dir / "demo.gif")
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--site", type=Path,
-                        help="already-exported site (skips telos view --export)")
-    parser.add_argument("--out", type=Path,
-                        default=Path(__file__).resolve().parent.parent / "docs",
-                        help="output directory (default: docs/)")
+    parser.add_argument(
+        "--site", type=Path, help="already-exported site (skips telos view --export)"
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=Path(__file__).resolve().parent.parent / "docs",
+        help="output directory (default: docs/)",
+    )
     parser.add_argument("--telos", default="telos", help="telos binary")
     args = parser.parse_args()
 
