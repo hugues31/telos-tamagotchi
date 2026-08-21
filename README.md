@@ -105,6 +105,7 @@ prompts/          the story: 8 prompts, prose + exact replay script
 tamagotchi/       one Python solution of the spec (domain, renderer, CLI)
 tests/            17 scenario proofs, discovered by the scn_NNNN convention
 tools/replay.py   deterministic replay driver (stdlib only)
+tools/record_demo.py  records docs/demo.gif from the exported spec site
 tools/check_*.py  the constraints' executable checks (fuzzer, AST import guard)
 ```
 
