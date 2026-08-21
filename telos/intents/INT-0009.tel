@@ -1,0 +1,19 @@
+intent INT-0009 "Vitals stay on the dial" {
+  status active
+  telos  "A gauge that reads 130 is a lie wearing a number."
+  statement ubiquitous {
+    system shall "clamp Pet.hunger, Pet.happiness and Pet.energy to 0..100"
+  }
+
+  scenario SCN-0012 "joy tops out at one hundred" {
+    given Pet { activity: awake, happiness: 95, hunger: 40, stage: baby }
+    when  PlayWithPet {}
+    then  Pet.happiness == 100
+  }
+
+  scenario SCN-0013 "weariness bottoms out at zero" {
+    given Pet { activity: awake, energy: 5, stage: baby }
+    when  TimeTicks {}
+    then  Pet.energy == 0
+  }
+}

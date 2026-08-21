@@ -1,0 +1,16 @@
+intent INT-0008 "Starvation is not a lifestyle" {
+  status active
+  telos  "A pet that cannot die makes neglect free, and care meaningless."
+  statement unwanted {
+    if     Pet.hunger >= 100
+    system shall set Pet.status = dead
+  }
+  requires INT-0004
+
+  scenario SCN-0011 "the tick that fills the gauge is the last" {
+    given Pet { activity: awake, energy: 50, hunger: 95, stage: baby, status: alive }
+    when  TimeTicks {}
+    then  Pet.hunger == 100
+    then  Pet.status == dead
+  }
+}

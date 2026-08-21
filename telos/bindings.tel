@@ -7,6 +7,9 @@ implements "tamagotchi/pet.py" -> INT-0004
 implements "tamagotchi/pet.py" -> INT-0005
 implements "tamagotchi/pet.py" -> INT-0006
 implements "tamagotchi/pet.py" -> INT-0007
+implements "tamagotchi/pet.py" -> INT-0008
+implements "tamagotchi/pet.py" -> INT-0009
+proves     "tests/test_death.py::scn_0011_the_tick_that_fills_the_gauge_is_the_last" -> SCN-0011
 proves     "tests/test_feed.py::scn_0002_a_meal_takes_the_edge_off_hunger" -> SCN-0002
 proves     "tests/test_feed.py::scn_0003_a_full_belly_stays_at_zero" -> SCN-0003
 proves     "tests/test_feed.py::scn_0005_every_meal_leaves_a_trace_on_the_scale" -> SCN-0005
@@ -17,3 +20,5 @@ proves     "tests/test_sleep.py::scn_0007_tucking_in_sends_the_pet_to_sleep" -> 
 proves     "tests/test_sleep.py::scn_0008_a_sleeping_pet_recovers_without_getting_hungrier" -> SCN-0008
 proves     "tests/test_sleep.py::scn_0009_a_fully_rested_pet_wakes_by_itself" -> SCN-0009
 proves     "tests/test_tick.py::scn_0006_a_tick_makes_a_waking_pet_hungrier_and_wearier" -> SCN-0006
+proves     "tests/test_vitals.py::scn_0012_joy_tops_out_at_one_hundred" -> SCN-0012
+proves     "tests/test_vitals.py::scn_0013_weariness_bottoms_out_at_zero" -> SCN-0013

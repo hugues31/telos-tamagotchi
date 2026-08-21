@@ -1,4 +1,4 @@
-"""The Tamagotchi domain: a pet, its appetites, its moods, its nights.
+"""The Tamagotchi domain: a pet, its needs, and the price of neglect.
 
 Every behaviour here answers to an intent sealed in `telos/`.
 """
@@ -16,6 +16,7 @@ TICK_APPETITE = 5
 TICK_FATIGUE = 10
 SLEEP_RECOVERY = 20
 FULL_ENERGY = 100
+STARVED = 100
 
 
 class Stage(StrEnum):
@@ -28,8 +29,18 @@ class Activity(StrEnum):
     ASLEEP = "asleep"
 
 
+class Status(StrEnum):
+    ALIVE = "alive"
+    DEAD = "dead"
+
+
 class PetAsleepError(Exception):
     """Raised when an interaction needs a pet that is awake."""
+
+
+def _clamp(value: int) -> int:
+    """INT-0009: vitals stay on the dial."""
+    return max(0, min(100, value))
 
 
 @dataclass
@@ -41,6 +52,7 @@ class Pet:
     energy: int = FULL_ENERGY
     weight: Decimal = Decimal("1.00")
     activity: Activity = Activity.AWAKE
+    status: Status = Status.ALIVE
 
 
 def hatch(pet: Pet) -> None:
@@ -50,7 +62,7 @@ def hatch(pet: Pet) -> None:
 
 def feed(pet: Pet) -> None:
     """INT-0002: feeding takes the edge off hunger, and leaves a trace."""
-    pet.hunger = max(0, pet.hunger - FEED_RELIEF)
+    pet.hunger = _clamp(pet.hunger - FEED_RELIEF)
     pet.weight += MEAL_WEIGHT
 
 
@@ -58,8 +70,8 @@ def play(pet: Pet) -> None:
     """INT-0003: playing lifts the mood. INT-0007: never while asleep."""
     if pet.activity is Activity.ASLEEP:
         raise PetAsleepError(f"{pet.name} is asleep; let them dream.")
-    pet.happiness += PLAY_JOY
-    pet.hunger += PLAY_APPETITE
+    pet.happiness = _clamp(pet.happiness + PLAY_JOY)
+    pet.hunger = _clamp(pet.hunger + PLAY_APPETITE)
 
 
 def put_to_bed(pet: Pet) -> None:
@@ -68,11 +80,13 @@ def put_to_bed(pet: Pet) -> None:
 
 
 def tick(pet: Pet) -> None:
-    """INT-0004: time gnaws at a waking pet. INT-0006: sleep restores."""
+    """INT-0004 time gnaws, INT-0006 sleep restores, INT-0008 starvation."""
     if pet.activity is Activity.ASLEEP:
-        pet.energy = min(FULL_ENERGY, pet.energy + SLEEP_RECOVERY)
+        pet.energy = _clamp(pet.energy + SLEEP_RECOVERY)
         if pet.energy >= FULL_ENERGY:
             pet.activity = Activity.AWAKE
     else:
-        pet.hunger += TICK_APPETITE
-        pet.energy -= TICK_FATIGUE
+        pet.hunger = _clamp(pet.hunger + TICK_APPETITE)
+        pet.energy = _clamp(pet.energy - TICK_FATIGUE)
+        if pet.hunger >= STARVED:
+            pet.status = Status.DEAD

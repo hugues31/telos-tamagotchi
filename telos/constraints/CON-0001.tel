@@ -1,0 +1,5 @@
+constraint CON-0001 quality "No gauge ever leaves the dial" {
+  rule  "After any sequence of events, hunger, happiness and energy read between 0 and 100."
+  scope global
+  check "python3 tools/check_vitals.py"
+}
