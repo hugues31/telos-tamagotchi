@@ -1,0 +1,69 @@
+name: Demo
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "pytest>=7"
+      - name: Install Telos v0.7.1
+        run: |
+          version=0.7.1
+          asset="telos_${version}_linux_amd64.tar.gz"
+          base="https://github.com/hugues31/telos-sdd/releases/download/v${version}"
+          cd "$RUNNER_TEMP"
+          curl -fsSLO "${base}/${asset}"
+          curl -fsSLO "${base}/checksums.txt"
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf "${asset}"
+          install -D -m 0755 telos "$HOME/.local/bin/telos"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Replay the whole story from a blank directory
+        run: |
+          git config --global user.name  "Telos Demo Replay"
+          git config --global user.email "replay@example.invalid"
+          python3 tools/replay.py --target "$(mktemp -d)" --compare
+
+  pages:
+    if: github.ref == 'refs/heads/main'
+    needs: replay
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Telos v0.7.1
+        run: |
+          version=0.7.1
+          asset="telos_${version}_linux_amd64.tar.gz"
+          base="https://github.com/hugues31/telos-sdd/releases/download/v${version}"
+          cd "$RUNNER_TEMP"
+          curl -fsSLO "${base}/${asset}"
+          curl -fsSLO "${base}/checksums.txt"
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf "${asset}"
+          install -D -m 0755 telos "$HOME/.local/bin/telos"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Export the spec as a static site
+        run: telos view --export site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,9 @@
+version = 1
+tool = "telos 0.7.1"
+spec_digest = "sha256:037c6fc2f831e5fb840b33f3c4f1c6d91c0516ec5d47ad1939b18c7d453668c3"
+
+[spec]
+"telos/bindings.tel" = "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+"telos/telos.toml" = "4efbb0e693fb2d7f5a818de94ca672b565518ecc"
+
+[code]

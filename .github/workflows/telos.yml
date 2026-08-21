@@ -1,0 +1,29 @@
+name: Telos
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  sealed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install Telos v0.7.1
+        run: |
+          version=0.7.1
+          asset="telos_${version}_linux_amd64.tar.gz"
+          base="https://github.com/hugues31/telos-sdd/releases/download/v${version}"
+          cd "$RUNNER_TEMP"
+          curl -fsSLO "${base}/${asset}"
+          curl -fsSLO "${base}/checksums.txt"
+          sha256sum --check --ignore-missing checksums.txt
+          tar -xzf "${asset}"
+          install -D -m 0755 telos "$HOME/.local/bin/telos"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Verify sealed Telos state
+        run: telos check --sealed
