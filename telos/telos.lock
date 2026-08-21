@@ -1,5 +1,5 @@
 version = 1
-tool = "telos 0.7.1"
+tool = "telos 0.8.2"
 sealed_by = "CHG-0005"
 spec_digest = "sha256:adfb588cfefa1c5b4f6755759488e0b604c5d498a30bb9ba23306d1da9178145"
 

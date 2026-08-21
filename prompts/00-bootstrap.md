@@ -14,11 +14,11 @@ You need two tools on your PATH:
 - `telos` — a single self-contained binary, no Rust toolchain needed:
 
   ```console
-  curl -fsSL https://raw.githubusercontent.com/hugues31/telos-sdd/main/install.sh | TELOS_VERSION=v0.7.1 sh
+  curl -fsSL https://raw.githubusercontent.com/hugues31/telos-sdd/main/install.sh | TELOS_VERSION=v0.8.2 sh
   ```
 
   (The script verifies the release's SHA-256 checksum and installs to
-  `~/.local/bin`. This story was sealed with v0.7.1 — pinning the
+  `~/.local/bin`. This story was sealed with v0.8.2 — pinning the
   version keeps your replay byte-identical.)
 - `pytest` — `python3 -m venv .venv && .venv/bin/pip install pytest`, then
   put `.venv/bin` on your PATH (Telos will invoke `pytest` to seal test

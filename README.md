@@ -25,7 +25,7 @@ spec — Telos happens to be written in Rust, and does not care.
 
 ```console
 # 1. Telos — a single binary, checksum-verified; only git is needed at runtime
-curl -fsSL https://raw.githubusercontent.com/hugues31/telos-sdd/main/install.sh | TELOS_VERSION=v0.7.1 sh
+curl -fsSL https://raw.githubusercontent.com/hugues31/telos-sdd/main/install.sh | TELOS_VERSION=v0.8.2 sh
 export PATH="$HOME/.local/bin:$PATH"
 
 # 2. pytest (Telos invokes it to seal test verdicts)
