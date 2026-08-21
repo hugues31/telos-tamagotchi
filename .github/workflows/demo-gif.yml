@@ -26,6 +26,10 @@ jobs:
           python-version: "3.12"
       - run: pip install playwright
       - run: python -m playwright install --with-deps chromium
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
       - name: Install Telos v0.8.2
         run: |
           version=0.8.2

@@ -44,6 +44,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 site/
+docs/demo.mp4
 ```
 <!-- replay:end -->
 
