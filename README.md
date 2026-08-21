@@ -2,6 +2,7 @@
 
 [![Telos seal](https://github.com/hugues31/telos-tamagotchi/actions/workflows/telos.yml/badge.svg)](https://github.com/hugues31/telos-tamagotchi/actions/workflows/telos.yml)
 [![Demo replay](https://github.com/hugues31/telos-tamagotchi/actions/workflows/demo.yml/badge.svg)](https://github.com/hugues31/telos-tamagotchi/actions/workflows/demo.yml)
+[![Browse the spec](https://img.shields.io/badge/GitHub_Pages-browse_the_spec-2ea44f?logo=githubpages&logoColor=white)](https://hugues31.github.io/telos-tamagotchi/)
 
 ```
   (\_ _/)
